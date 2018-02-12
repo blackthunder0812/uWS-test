@@ -7,10 +7,11 @@
 
 int main(int argc, char* argv[]) {
   (void) argc; (void) argv;
+  uS::TLS::Context tls_context = uS::TLS::createContext("./crt.pem", "./pkey.pem", "quenmatroi");
   std::vector<std::thread *> threads(std::thread::hardware_concurrency());
-  std::transform(threads.begin(), threads.end(), threads.begin(), [](std::thread *t) {
+  std::transform(threads.begin(), threads.end(), threads.begin(), [&](std::thread *t) {
     (void) t;
-    return new std::thread([]() {
+    return new std::thread([&]() {
       uWS::Hub h;
       h.onMessage([](uWS::WebSocket<uWS::SERVER> *ws, char *message, size_t length, uWS::OpCode opCode) {
         std::cout << "Thread ID: " << std::this_thread::get_id() << ", Addr: " << ws->getAddress().address << ", Port: " << ws->getAddress().port << ": ";
@@ -18,7 +19,7 @@ int main(int argc, char* argv[]) {
         std::cout.flush();
         ws->send(message, length, opCode);
       });
-      if (!h.listen(LISTEN_PORT, nullptr, uS::ListenOptions::REUSE_PORT)) {
+      if (!h.listen(LISTEN_PORT, tls_context, uS::ListenOptions::REUSE_PORT)) {
         std::cerr << "Failed to listen on port " <<  LISTEN_PORT << std::endl;
       }
       h.run();
