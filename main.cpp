@@ -25,9 +25,9 @@ int main(int argc, char* argv[]) {
         std::cout.flush();
         ws->send(message, length, opCode);
       });
-      ssl_group->onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t length, size_t remainingBytes) {
-        res->end("Hello, World!", 13);
-      });
+//      ssl_group->onHttpRequest([](uWS::HttpResponse *res, uWS::HttpRequest req, char *data, size_t length, size_t remainingBytes) {
+//        res->end("Hello, World!", 13);
+//      });
       if (!h.listen(LISTEN_PORT, tls_context, uS::ListenOptions::REUSE_PORT, ssl_group)) {
         std::cerr << "Failed to listen to Websocket Secure on port " <<  LISTEN_PORT << std::endl;
         return EXIT_FAILURE;
